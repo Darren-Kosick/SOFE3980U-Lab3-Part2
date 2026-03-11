@@ -124,7 +124,7 @@ public class BinaryControllerTest {
 	    public void postInvalidOperator() throws Exception {
         this.mvc.perform(post("/").param("operand1","111").param("operator","-").param("operand2","111"))//.andDo(print())
             .andExpect(status().isOk())
-            .andExpect(view().name("Error"))
+            .andExpect(view().name("error"))
 			.andExpect(model().attribute("operand1", "111"))
 			.andExpect(model().attribute("operator", "-"))
 			.andExpect(model().attribute("operand2", "111"));
