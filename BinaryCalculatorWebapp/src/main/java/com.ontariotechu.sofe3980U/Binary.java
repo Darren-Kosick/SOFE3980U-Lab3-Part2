@@ -10,32 +10,39 @@ public class Binary
 	/**
 	* A constructor that generates a binary object.
 	*
-	* @param number a String of the binary values. It should conatins only zeros or ones with any length and order. otherwise, the value of "0" will be stored.   Trailing zeros will be excluded and empty string will be considered as zero.
+	* @param number a String of the binary values. It should contain only zeros or ones with any length and order. otherwise, the value of "0" will be stored.   Trailing zeros will be excluded and empty string will be considered as zero.
 	*/
-    public Binary(String number) {
+	public Binary(String number) {
+		if (number == null || number.isEmpty()) {
+			this.number = "0"; // Default to "0" for null or empty input
+			return;
+		}
+	
+		// Validate the binary string (only '0' or '1' allowed)
 		for (int i = 0; i < number.length(); i++) {
-			// check each character if it's not 0 or 1
-			char ch=number.charAt(i);
-			if(ch!='0' && ch!='1') {
-				number="0"; // if not store "0" and end the function
+			char ch = number.charAt(i);
+			if (ch != '0' && ch != '1') {
+				this.number = "0"; // Default to "0" for invalid input
 				return;
 			}
 		}
-		// remove any trailing zeros
+	
+		// Remove leading zeros
 		int beg;
 		for (beg = 0; beg < number.length(); beg++) {
-			if (number.charAt(beg)!='0')
+			if (number.charAt(beg) != '0') {
 				break;
+			}
 		}
-		//beg has the index of the first non zero digit in the number
-		this.number=number.substring(beg); // exclude the trailing zeros if any
-		// uncomment the following code
-		
-		if(this.number=="") { // replace empty strings with a single zero
-			this.number="0";
+	
+		// If all digits are '0', ensure number is "0"
+		this.number = (beg == number.length()) ? "0" : number.substring(beg);
+	
+		// Ensure empty strings are replaced with "0"
+		if (this.number.isEmpty()) {
+			this.number = "0";
 		}
-		
-    }
+	}
 	/**
 	* Return the binary value of the variable
 	*
@@ -79,4 +86,83 @@ public class Binary
 		return result;
 		
 	}
-}	
+
+	/**
+	* Multiply two binary variables.
+	*
+	* @param num1 The first operand
+	* @param num2 The second operand
+	* @return A binary variable with a value of <i>num1*num2</i>.
+	*/
+	public static Binary multiply(Binary num1, Binary num2)
+	{
+		Binary result = new Binary("0");
+		String n2 = num2.number;
+
+		for(int i = n2.length()-1, shift=0; i>=0; i--, shift++)
+		{
+			if(n2.charAt(i)=='1')
+			{
+				String temp = num1.number;
+				for(int j=0;j<shift;j++)
+					temp += "0";
+				result = add(result, new Binary(temp));
+			}
+		}
+		return result;
+	}
+
+	/**
+	* Bitwise AND operation between two binary variables.
+	*
+	* @param num1 The first operand
+	* @param num2 The second operand
+	* @return A binary variable with a value of <i>num1 & num2</i>.
+	*/
+	public static Binary and(Binary num1, Binary num2)
+	{
+		String n1 = num1.number;
+		String n2 = num2.number;
+
+		int maxLen = Math.max(n1.length(), n2.length());
+		n1 = String.format("%" + maxLen + "s", n1).replace(' ', '0');
+		n2 = String.format("%" + maxLen + "s", n2).replace(' ', '0');
+
+		String result="";
+		for(int i=0;i<maxLen;i++)
+		{
+			if(n1.charAt(i)=='1' && n2.charAt(i)=='1')
+				result+="1";
+			else
+				result+="0";
+		}
+		return new Binary(result);
+	}
+
+	/**
+	* Bitwise OR operation between two binary variables.
+	*
+	* @param num1 The first operand
+	* @param num2 The second operand
+	* @return A binary variable with a value of <i>num1 | num2</i>.
+	*/
+	public static Binary or(Binary num1, Binary num2)
+	{
+		String n1 = num1.number;
+		String n2 = num2.number;
+
+		int maxLen = Math.max(n1.length(), n2.length());
+		n1 = String.format("%" + maxLen + "s", n1).replace(' ', '0');
+		n2 = String.format("%" + maxLen + "s", n2).replace(' ', '0');
+
+		String result="";
+		for(int i=0;i<maxLen;i++)
+		{
+			if(n1.charAt(i)=='1' || n2.charAt(i)=='1')
+				result+="1";
+			else
+				result+="0";
+		}
+		return new Binary(result);
+	}
+}

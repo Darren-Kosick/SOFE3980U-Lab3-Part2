@@ -57,4 +57,77 @@ public class BinaryControllerTest {
 			.andExpect(model().attribute("operand1", "111"));
     }
 
+	@Test
+    public void getParameterLeadingZeros() throws Exception {
+        this.mvc.perform(get("/").param("operand1","0000"))
+            .andExpect(status().isOk())
+            .andExpect(view().name("calculator"))
+			.andExpect(model().attribute("operand1", "0000"))
+			.andExpect(model().attribute("operand1Focused", true));
+    }
+
+	@Test
+	    public void postAddCarry() throws Exception {
+        this.mvc.perform(post("/").param("operand1","111").param("operator","+").param("operand2","1"))//.andDo(print())
+            .andExpect(status().isOk())
+            .andExpect(view().name("result"))
+			.andExpect(model().attribute("result", "1000"))
+			.andExpect(model().attribute("operand1", "111"));
+    }
+
+	@Test
+	    public void postAddInvalidOperand() throws Exception {
+        this.mvc.perform(post("/").param("operand1","12").param("operator","+").param("operand2","1"))//.andDo(print())
+            .andExpect(status().isOk())
+            .andExpect(view().name("result"))
+			.andExpect(model().attribute("result", "1"))
+			.andExpect(model().attribute("operand1", "12"));
+    }
+
+	@Test
+	    public void postMultiplyByZero() throws Exception {
+        this.mvc.perform(post("/").param("operand1","101").param("operator","*").param("operand2","0"))//.andDo(print())
+            .andExpect(status().isOk())
+            .andExpect(view().name("result"))
+			.andExpect(model().attribute("result", "0"))
+			.andExpect(model().attribute("operand1", "101"));
+    }
+
+	@Test
+	    public void postMultiplyDifferentLengths() throws Exception {
+        this.mvc.perform(post("/").param("operand1","101").param("operator","*").param("operand2","10"))//.andDo(print())
+            .andExpect(status().isOk())
+            .andExpect(view().name("result"))
+			.andExpect(model().attribute("result", "1010"))
+			.andExpect(model().attribute("operand1", "101"));
+    }
+
+	@Test
+	    public void postAndDifferentLengths() throws Exception {
+        this.mvc.perform(post("/").param("operand1","111").param("operator","&").param("operand2","1"))//.andDo(print())
+            .andExpect(status().isOk())
+            .andExpect(view().name("result"))
+			.andExpect(model().attribute("result", "1"))
+			.andExpect(model().attribute("operand1", "111"));
+    }
+
+	@Test
+	    public void postOrWithZero() throws Exception {
+        this.mvc.perform(post("/").param("operand1","1000").param("operator","|").param("operand2","0"))//.andDo(print())
+            .andExpect(status().isOk())
+            .andExpect(view().name("result"))
+			.andExpect(model().attribute("result", "1000"))
+			.andExpect(model().attribute("operand1", "1000"));
+    }
+
+	@Test
+	    public void postInvalidOperator() throws Exception {
+        this.mvc.perform(post("/").param("operand1","111").param("operator","-").param("operand2","111"))//.andDo(print())
+            .andExpect(status().isOk())
+            .andExpect(view().name("Error"))
+			.andExpect(model().attribute("operand1", "111"))
+			.andExpect(model().attribute("operator", "-"))
+			.andExpect(model().attribute("operand2", "111"));
+    }
+
 }
